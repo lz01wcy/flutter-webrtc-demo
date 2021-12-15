@@ -127,6 +127,17 @@ class _MyAppState extends State<MyApp> {
             ]));
   }
 
+  /// 查找特定id的peer
+  _showFindPeer(context, {String id = "lzjy123"}) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => CallSample(
+                  host: _server,
+                  targetId: id,
+                )));
+  }
+
   ///初始化导航数据
   _initItems() {
     items = <RouteItem>[
@@ -135,15 +146,15 @@ class _MyAppState extends State<MyApp> {
           subtitle: 'P2P Call Sample.',
           push: (BuildContext context) {
             _datachannel = false;
-            _showAddressDialog(context);
+            _showFindPeer(context);
           }),
-      RouteItem(
-          title: 'Data Channel Sample',
-          subtitle: 'P2P Data Channel.',
-          push: (BuildContext context) {
-            _datachannel = true;
-            _showAddressDialog(context);
-          }),
+      // RouteItem(
+      //     title: 'Data Channel Sample',
+      //     subtitle: 'P2P Data Channel.',
+      //     push: (BuildContext context) {
+      //       _datachannel = true;
+      //       _showAddressDialog(context);
+      //     }),
     ];
   }
 }

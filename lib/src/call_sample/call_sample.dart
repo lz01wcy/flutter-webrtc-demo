@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'signaling.dart';
@@ -32,6 +34,8 @@ class _CallSampleState extends State<CallSample> {
     super.initState();
     initRenderers();
     _connect();
+    // 直接连接 不行 消息还没拿到
+    // _invitePeer(context, _targetPeer["id"], false);
   }
 
   /// 初始化渲染器
@@ -89,9 +93,15 @@ class _CallSampleState extends State<CallSample> {
       setState(() {
         _selfId = event['self'];
         _peers = event['peers'];
+        print("peers: $_peers");
         for (var peer in _peers) {
           if (peer['id'] == widget.targetId) {
             _targetPeer = peer;
+            if (_targetPeer != null) {
+              Future.delayed(Duration(milliseconds: 200), () async {
+                await _invitePeer(context, _targetPeer["id"], false);
+              });
+            }
             break;
           }
         }
@@ -113,6 +123,7 @@ class _CallSampleState extends State<CallSample> {
 
   /// invite
   _invitePeer(BuildContext context, String peerId, bool useScreen) async {
+    print("_invitePeer $peerId");
     if (_signaling != null && peerId != _selfId) {
       _signaling?.invite(peerId, 'video', useScreen);
     }
@@ -168,84 +179,72 @@ class _CallSampleState extends State<CallSample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('P2P Call Sample' +
-            (_selfId != null ? ' [Your ID ($_selfId)] ' : '')),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: null,
-            tooltip: 'setup',
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _inCalling
-          ? SizedBox(
-              width: 200.0,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FloatingActionButton(
-                      child: const Icon(Icons.switch_camera),
-                      onPressed: _switchCamera,
-                    ),
-                    FloatingActionButton(
-                      onPressed: _hangUp,
-                      tooltip: 'Hangup',
-                      child: Icon(Icons.call_end),
-                      backgroundColor: Colors.pink,
-                    ),
-                    FloatingActionButton(
-                      child: const Icon(Icons.mic_off),
-                      onPressed: _muteMic,
-                    )
-                  ]))
-          : null,
-      body: _inCalling
-          ? OrientationBuilder(builder: (context, orientation) {
-              // 这个是画面?
-              return Container(
-                child: Stack(children: <Widget>[
-                  Positioned(
-                      left: 0.0,
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
+        appBar: AppBar(
+          title: Text('P2P Call Sample' +
+              (_selfId != null ? ' [Your ID ($_selfId)] ' : '')),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: null,
+              tooltip: 'setup',
+            ),
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _inCalling
+            ? SizedBox(
+                width: 200.0,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      FloatingActionButton(
+                        child: const Icon(Icons.switch_camera),
+                        onPressed: _switchCamera,
+                      ),
+                      FloatingActionButton(
+                        onPressed: _hangUp,
+                        tooltip: 'Hangup',
+                        child: Icon(Icons.call_end),
+                        backgroundColor: Colors.pink,
+                      ),
+                      FloatingActionButton(
+                        child: const Icon(Icons.mic_off),
+                        onPressed: _muteMic,
+                      )
+                    ]))
+            : null,
+        body: _inCalling
+            ? OrientationBuilder(builder: (context, orientation) {
+                // 这个是画面?
+                return Container(
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                        left: 0.0,
+                        right: 0.0,
+                        top: 0.0,
+                        bottom: 0.0,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: RTCVideoView(_remoteRenderer),
+                          decoration: BoxDecoration(color: Colors.black54),
+                        )),
+                    Positioned(
+                      left: 20.0,
+                      top: 20.0,
                       child: Container(
-                        margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: RTCVideoView(_remoteRenderer),
+                        width:
+                            orientation == Orientation.portrait ? 90.0 : 120.0,
+                        height:
+                            orientation == Orientation.portrait ? 120.0 : 90.0,
+                        child: RTCVideoView(_localRenderer, mirror: true),
                         decoration: BoxDecoration(color: Colors.black54),
-                      )),
-                  Positioned(
-                    left: 20.0,
-                    top: 20.0,
-                    child: Container(
-                      width: orientation == Orientation.portrait ? 90.0 : 120.0,
-                      height:
-                          orientation == Orientation.portrait ? 120.0 : 90.0,
-                      child: RTCVideoView(_localRenderer, mirror: true),
-                      decoration: BoxDecoration(color: Colors.black54),
+                      ),
                     ),
-                  ),
-                ]),
-              );
-            })
-          : ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(0.0),
-              itemCount: (_targetPeer != null ? 1 : 0),
-              itemBuilder: (context, i) {
-                print("_peers: $_peers");
-                // 这里可以过滤
-                // return _peers[i]['id'].toString().startsWith("\$")
-                //     ? _buildRow(context, _peers[i])
-                //     : Container();
-                _invitePeer(context, _targetPeer["id"], false);
-                return Container();
-              }),
-    );
+                  ]),
+                );
+              })
+            : Container());
   }
 }

@@ -38,7 +38,7 @@ enum DialogDemoAction {
 
 class _MyAppState extends State<MyApp> {
   List<RouteItem> items = [];
-  String _server = '';
+  String _server = '10.18.38.203';
   late SharedPreferences _prefs;
 
   bool _datachannel = false;
@@ -47,38 +47,34 @@ class _MyAppState extends State<MyApp> {
   initState() {
     super.initState();
     _initData();
-    _initItems();
+    // _initItems();
+    // _showFindPeer(this.context, widget.id);
   }
 
-  _buildRow(context, item) {
-    return ListBody(children: <Widget>[
-      ListTile(
-        title: Text(item.title),
-        onTap: () => item.push(context),
-        trailing: Icon(Icons.arrow_right),
-      ),
-      Divider()
-    ]);
-  }
+  // _buildRow(context, item) {
+  //   return ListBody(children: <Widget>[
+  //     ListTile(
+  //       title: Text(item.title),
+  //       onTap: () => item.push(context),
+  //       trailing: Icon(Icons.arrow_right),
+  //     ),
+  //     Divider()
+  //   ]);
+  // }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            title: Text('Flutter-WebRTC example'),
-          ),
-          body: ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(0.0),
-              itemCount: items.length,
-              // 然后显示导航里的数据
-              itemBuilder: (context, i) {
-                return _buildRow(context, items[i]);
-              })
-          // body: _showFindPeer(context),
-          ),
-    );
+        home: Scaffold(
+            // appBar: AppBar(
+            //   title: Text('Flutter-WebRTC example'),
+            // ),
+            body: CallSample(
+              host: _server,
+              targetId: widget.id,
+            ))
+        // body: _showFindPeer(context),
+        );
   }
 
   /// 初始化数据? 服务器host
@@ -147,41 +143,42 @@ class _MyAppState extends State<MyApp> {
   // }
 
   /// 查找特定id的peer
-  _showFindPeer(context, String id) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => CallSample(
-                  host: _server,
-                  targetId: id,
-                )));
-  }
+  // _showFindPeer(context, String id) {
+  //   Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (BuildContext context) => CallSample(
+  //                 host: _server,
+  //                 targetId: id,
+  //               )),
+  //       (route) => route == null);
+  // }
 
   ///初始化导航数据
-  _initItems() {
-    // items = <RouteItem>[
-    //   RouteItem(
-    //       title: 'P2P Call Sample',
-    //       subtitle: 'P2P Call Sample.',
-    //       push: (BuildContext context) {
-    //         _datachannel = false;
-    //         _showFindPeer(context);
-    //       }),
-    items = <RouteItem>[
-      RouteItem(
-          title: 'P2P Call Sample',
-          subtitle: 'P2P Call Sample.',
-          push: (BuildContext context) {
-            _datachannel = false;
-            _showFindPeer(context, widget.id);
-          }),
-      // RouteItem(
-      //     title: 'Data Channel Sample',
-      //     subtitle: 'P2P Data Channel.',
-      //     push: (BuildContext context) {
-      //       _datachannel = true;
-      //       _showAddressDialog(context);
-      //     }),
-    ];
-  }
+  // _initItems() {
+  //   // items = <RouteItem>[
+  //   //   RouteItem(
+  //   //       title: 'P2P Call Sample',
+  //   //       subtitle: 'P2P Call Sample.',
+  //   //       push: (BuildContext context) {
+  //   //         _datachannel = false;
+  //   //         _showFindPeer(context);
+  //   //       }),
+  //   items = <RouteItem>[
+  //     RouteItem(
+  //         title: 'P2P Call Sample',
+  //         subtitle: 'P2P Call Sample.',
+  //         push: (BuildContext context) {
+  //           _datachannel = false;
+  //           _showFindPeer(context, widget.id);
+  //         }),
+  //     // RouteItem(
+  //     //     title: 'Data Channel Sample',
+  //     //     subtitle: 'P2P Data Channel.',
+  //     //     push: (BuildContext context) {
+  //     //       _datachannel = true;
+  //     //       _showAddressDialog(context);
+  //     //     }),
+  //   ];
+  // }
 }

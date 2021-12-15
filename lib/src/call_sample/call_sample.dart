@@ -243,9 +243,8 @@ class _CallSampleState extends State<CallSample> {
                 // return _peers[i]['id'].toString().startsWith("\$")
                 //     ? _buildRow(context, _peers[i])
                 //     : Container();
-                return _targetPeer != null
-                    ? _buildRow(context, _targetPeer)
-                    : Container();
+                _invitePeer(context, _targetPeer["id"], false);
+                return Container();
               }),
     );
   }

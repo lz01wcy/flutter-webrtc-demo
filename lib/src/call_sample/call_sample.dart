@@ -8,9 +8,10 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 class CallSample extends StatefulWidget {
   static String tag = 'call_sample';
   final String host;
-  final String targetId;
+  final String id;
+  final bool isTeacher;
 
-  CallSample({required this.host, required this.targetId});
+  CallSample({required this.host, required this.id, required this.isTeacher});
 
   @override
   _CallSampleState createState() => _CallSampleState();
@@ -91,18 +92,21 @@ class _CallSampleState extends State<CallSample> {
 
     _signaling?.onPeersUpdate = ((event) {
       setState(() {
-        _selfId = event['self'];
+        // 是教师 自身id
+        _selfId = widget.isTeacher ? widget.id : event['self'];
         _peers = event['peers'];
         print("peers: $_peers");
         for (var peer in _peers) {
-          if (peer['id'] == widget.targetId) {
-            _targetPeer = peer;
-            if (_targetPeer != null) {
-              Future.delayed(Duration(milliseconds: 200), () async {
-                await _invitePeer(context, _targetPeer["id"], false);
-              });
+          // 不是教师 连接
+          if (!widget.isTeacher) {
+            // id是目标id
+            if (peer['id'] == widget.id) {
+              _targetPeer = peer;
+              if (_targetPeer != null) {
+                _invitePeer(context, _targetPeer["id"], false);
+              }
+              break;
             }
-            break;
           }
         }
       });
@@ -197,10 +201,10 @@ class _CallSampleState extends State<CallSample> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      FloatingActionButton(
-                        child: const Icon(Icons.switch_camera),
-                        onPressed: _switchCamera,
-                      ),
+                      // FloatingActionButton(
+                      //   child: const Icon(Icons.switch_camera),
+                      //   onPressed: _switchCamera,
+                      // ),
                       FloatingActionButton(
                         onPressed: _hangUp,
                         tooltip: 'Hangup',
@@ -245,6 +249,9 @@ class _CallSampleState extends State<CallSample> {
                   ]),
                 );
               })
-            : Container());
+            // 搞个友好提示
+            : Container(
+                child: Text("等待连接中..."),
+              ));
   }
 }

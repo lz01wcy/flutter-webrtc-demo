@@ -6,7 +6,9 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 class CallSample extends StatefulWidget {
   static String tag = 'call_sample';
   final String host;
-  CallSample({required this.host});
+  final String targetId;
+
+  CallSample({required this.host, required this.targetId});
 
   @override
   _CallSampleState createState() => _CallSampleState();
@@ -15,6 +17,7 @@ class CallSample extends StatefulWidget {
 class _CallSampleState extends State<CallSample> {
   Signaling? _signaling;
   List<dynamic> _peers = [];
+  dynamic _targetPeer;
   String? _selfId;
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
@@ -31,6 +34,7 @@ class _CallSampleState extends State<CallSample> {
     _connect();
   }
 
+  /// 初始化渲染器
   initRenderers() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
@@ -44,8 +48,11 @@ class _CallSampleState extends State<CallSample> {
     _remoteRenderer.dispose();
   }
 
+  /// 连接ws _signaling的状态处理
   void _connect() async {
+    // 连接host的8086端口的/ws
     _signaling ??= Signaling(widget.host)..connect();
+    // 啥也没干
     _signaling?.onSignalingStateChange = (SignalingState state) {
       switch (state) {
         case SignalingState.ConnectionClosed:
@@ -55,6 +62,7 @@ class _CallSampleState extends State<CallSample> {
       }
     };
 
+    // 状态处理
     _signaling?.onCallStateChange = (Session session, CallState state) {
       switch (state) {
         case CallState.CallStateNew:
@@ -81,6 +89,12 @@ class _CallSampleState extends State<CallSample> {
       setState(() {
         _selfId = event['self'];
         _peers = event['peers'];
+        for (var peer in _peers) {
+          if (peer['id'] == widget.targetId) {
+            _targetPeer = peer;
+            break;
+          }
+        }
       });
     });
 
@@ -97,6 +111,7 @@ class _CallSampleState extends State<CallSample> {
     });
   }
 
+  /// invite
   _invitePeer(BuildContext context, String peerId, bool useScreen) async {
     if (_signaling != null && peerId != _selfId) {
       _signaling?.invite(peerId, 'video', useScreen);
@@ -117,6 +132,7 @@ class _CallSampleState extends State<CallSample> {
     _signaling?.muteMic();
   }
 
+  // 生成客户端列表
   _buildRow(context, peer) {
     var self = (peer['id'] == _selfId);
     return ListBody(children: <Widget>[
@@ -188,6 +204,7 @@ class _CallSampleState extends State<CallSample> {
           : null,
       body: _inCalling
           ? OrientationBuilder(builder: (context, orientation) {
+              // 这个是画面?
               return Container(
                 child: Stack(children: <Widget>[
                   Positioned(
@@ -219,9 +236,16 @@ class _CallSampleState extends State<CallSample> {
           : ListView.builder(
               shrinkWrap: true,
               padding: const EdgeInsets.all(0.0),
-              itemCount: (_peers != null ? _peers.length : 0),
+              itemCount: (_targetPeer != null ? 1 : 0),
               itemBuilder: (context, i) {
-                return _buildRow(context, _peers[i]);
+                print("_peers: $_peers");
+                // 这里可以过滤
+                // return _peers[i]['id'].toString().startsWith("\$")
+                //     ? _buildRow(context, _peers[i])
+                //     : Container();
+                return _targetPeer != null
+                    ? _buildRow(context, _targetPeer)
+                    : Container();
               }),
     );
   }

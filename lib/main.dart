@@ -44,7 +44,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  String id = "";
+  String id = "lzjy123";
   bool isTeacher = false;
 
   MyApp();

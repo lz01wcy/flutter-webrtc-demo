@@ -37,8 +37,10 @@ class Session {
 class Signaling {
   Signaling(this._host);
 
+  /// 教师用
   Signaling.setId(this._host, String id) {
     _selfId = id;
+    _noStream = true;
   }
 
   JsonEncoder _encoder = JsonEncoder();
@@ -48,6 +50,7 @@ class Signaling {
   var _host;
   var _port = 8086;
   var _turnCredential;
+  bool _noStream = false;
   Map<String, Session> _sessions = {};
   MediaStream? _localStream;
   List<MediaStream> _remoteStreams = <MediaStream>[];
@@ -289,28 +292,18 @@ class Signaling {
 
   Future<MediaStream> createStream(String media, bool userScreen) async {
     final Map<String, dynamic> mediaConstraints = {
-      'audio': userScreen ? false : true,
-      'video': userScreen
-          ? true
-          : {
-              'mandatory': {
-                'minWidth':
-                    '640', // Provide your own width, height and frame rate here
-                'minHeight': '480',
-                'minFrameRate': '30',
-              },
-              'facingMode': 'user',
-              'optional': [],
-            }
+      'audio': false,
+      'video': false,
     };
-
     MediaStream stream = userScreen
         ? await navigator.mediaDevices.getDisplayMedia(mediaConstraints)
         : await navigator.mediaDevices.getUserMedia(mediaConstraints);
+
     onLocalStream?.call(stream);
     return stream;
   }
 
+  /// 创建会话
   Future<Session> _createSession(Session? session,
       {required String peerId,
       required String sessionId,

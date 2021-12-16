@@ -10,48 +10,46 @@ import 'src/call_sample/call_sample.dart';
 import 'src/call_sample/data_channel_sample.dart';
 import 'src/route_item.dart';
 
-void main(List<String> args) {
+void main() {
   // -id lzjy123
   // -isTeacher 1
-  print(args.toString());
-  String? id;
-  bool? isTeacher;
-  if (args.length == 0) {
-    print("bad request: $id, $isTeacher");
-    // exit(1);
-    return;
-  }
-  if (args.length == 1) {
-    args = args[0].split(" ");
-  }
-  for (var i = 0; i < args.length; i++) {
-    print("$i: ${args[i]}");
-    if (args[i] == "-id" && i + 1 < args.length) {
-      id = args[i + 1];
-    }
-  }
-  for (var i = 0; i < args.length; i++) {
-    if (args[i] == "-isTeacher" && i + 1 < args.length) {
-      isTeacher = args[i + 1] == "1";
-    }
-  }
-  if (id == null || isTeacher == null) {
-    print("bad request: $id, $isTeacher");
-    // exit(1);
-    return;
-  }
-
-  runApp(new MyApp(
-    id: id,
-    isTeacher: isTeacher,
-  ));
+  // print(args.toString());
+  // String? id;
+  // bool? isTeacher;
+  // if (args.length == 0) {
+  //   print("bad request: $id, $isTeacher");
+  //   // exit(1);
+  //   return;
+  // }
+  // if (args.length == 1) {
+  //   args = args[0].split(" ");
+  // }
+  // for (var i = 0; i < args.length; i++) {
+  //   print("$i: ${args[i]}");
+  //   if (args[i] == "-id" && i + 1 < args.length) {
+  //     id = args[i + 1];
+  //   }
+  // }
+  // for (var i = 0; i < args.length; i++) {
+  //   if (args[i] == "-isTeacher" && i + 1 < args.length) {
+  //     isTeacher = args[i + 1] == "1";
+  //   }
+  // }
+  // if (id == null || isTeacher == null) {
+  //   print("bad request: $id, $isTeacher");
+  //   // exit(1);
+  //   return;
+  // }
+  runApp(new MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final String id;
-  final bool isTeacher;
+  String id = "";
+  bool isTeacher = false;
 
-  MyApp({required this.id, required this.isTeacher});
+  MyApp();
+
+  MyApp.setID({required this.id, required this.isTeacher});
 
   @override
   _MyAppState createState() => new _MyAppState();

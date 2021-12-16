@@ -37,6 +37,10 @@ class Session {
 class Signaling {
   Signaling(this._host);
 
+  Signaling.setId(this._host, String id) {
+    _selfId = id;
+  }
+
   JsonEncoder _encoder = JsonEncoder();
   JsonDecoder _decoder = JsonDecoder();
   String _selfId = randomNumeric(6);

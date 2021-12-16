@@ -1,4 +1,6 @@
 import 'dart:core';
+import 'dart:io';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -14,9 +16,16 @@ void main(List<String> args) {
   print(args.toString());
   String? id;
   bool? isTeacher;
-  args = args[0].split(" ");
+  if (args.length == 0) {
+    print("bad request: $id, $isTeacher");
+    // exit(1);
+    return;
+  }
+  if (args.length == 1) {
+    args = args[0].split(" ");
+  }
   for (var i = 0; i < args.length; i++) {
-    print("$i: ${args[i]}\r\n");
+    print("$i: ${args[i]}");
     if (args[i] == "-id" && i + 1 < args.length) {
       id = args[i + 1];
     }
@@ -28,6 +37,7 @@ void main(List<String> args) {
   }
   if (id == null || isTeacher == null) {
     print("bad request: $id, $isTeacher");
+    // exit(1);
     return;
   }
 

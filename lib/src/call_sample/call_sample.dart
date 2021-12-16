@@ -56,7 +56,12 @@ class _CallSampleState extends State<CallSample> {
   /// 连接ws _signaling的状态处理
   void _connect() async {
     // 连接host的8086端口的/ws
-    _signaling ??= Signaling(widget.host)..connect();
+    // 如果是教师 给自己设置id
+    if (widget.isTeacher) {
+      _signaling ??= Signaling.setId(widget.host, widget.id)..connect();
+    } else {
+      _signaling ??= Signaling(widget.host)..connect();
+    }
     // 啥也没干
     _signaling?.onSignalingStateChange = (SignalingState state) {
       switch (state) {

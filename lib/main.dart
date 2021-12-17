@@ -59,15 +59,15 @@ enum DialogDemoAction {
 
 class _MyAppState extends State<MyApp> {
   List<RouteItem> items = [];
-  String _server = '10.18.38.203';
-  late SharedPreferences _prefs;
+  String _server = 'rtc.educlouds.cn';
+  // late SharedPreferences _prefs;
 
   bool _datachannel = false;
 
   @override
   initState() {
     super.initState();
-    _initData();
+    // _initData();
     // _initItems();
     // _showFindPeer(this.context, widget.id);
   }
@@ -119,12 +119,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   /// 初始化数据? 服务器host
-  _initData() async {
-    _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _server = _prefs.getString('server') ?? 'demo.cloudwebrtc.com';
-    });
-  }
+  // _initData() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     _server = _prefs.getString('server') ?? 'demo.cloudwebrtc.com';
+  //   });
+  // }
 
   /// 服务器信息设置完到这里了
   void showDemoDialog<T>(

@@ -236,20 +236,21 @@ class _CallSampleState extends State<CallSample> {
                           margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height,
-                          child: RTCVideoView(_remoteRenderer),
+                          child: RTCVideoView(_localRenderer, mirror: true),
                           decoration: BoxDecoration(color: Colors.black54),
                         )),
-                    Positioned(
-                      left: 20.0,
-                      top: 20.0,
-                      child: Container(
-                        width:
-                            orientation == Orientation.portrait ? 90.0 : 120.0,
-                        height:
-                            orientation == Orientation.portrait ? 120.0 : 90.0,
-                        child: RTCVideoView(_localRenderer, mirror: true),
-                        decoration: BoxDecoration(color: Colors.black54),
-                      ),
+                    // 小窗
+                    // Positioned(
+                    //   left: 20.0,
+                    //   top: 20.0,
+                    //   child: Container(
+                    //     width:
+                    //         orientation == Orientation.portrait ? 90.0 : 120.0,
+                    //     height:
+                    //         orientation == Orientation.portrait ? 120.0 : 90.0,
+                    //     child: RTCVideoView(_localRenderer, mirror: true),
+                    //     decoration: BoxDecoration(color: Colors.black54),
+                    //   ),
                     ),
                   ]),
                 );

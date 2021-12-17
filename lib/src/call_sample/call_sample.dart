@@ -188,17 +188,17 @@ class _CallSampleState extends State<CallSample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('P2P Call Sample' +
-              (_selfId != null ? ' [Your ID ($_selfId)] ' : '')),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: null,
-              tooltip: 'setup',
-            ),
-          ],
-        ),
+        // appBar: AppBar(
+        //   title: Text('P2P Call Sample' +
+        //       (_selfId != null ? ' [Your ID ($_selfId)] ' : '')),
+        //   actions: <Widget>[
+        //     IconButton(
+        //       icon: const Icon(Icons.settings),
+        //       onPressed: null,
+        //       tooltip: 'setup',
+        //     ),
+        //   ],
+        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: _inCalling
             ? SizedBox(

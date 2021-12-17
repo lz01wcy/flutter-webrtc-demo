@@ -1,9 +1,11 @@
 import 'dart:core';
+import 'dart:html';
 import 'dart:io';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc_demo/src/call_sample/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/call_sample/call_sample.dart';
@@ -44,12 +46,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  String id = "lzjy123";
-  bool isTeacher = false;
-
   MyApp();
-
-  MyApp.setID({required this.id, required this.isTeacher});
 
   @override
   _MyAppState createState() => new _MyAppState();
@@ -89,17 +86,36 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-            // appBar: AppBar(
-            //   title: Text('Flutter-WebRTC example'),
-            // ),
-            body: CallSample(
-      host: _server,
-      id: widget.id,
-      isTeacher: widget.isTeacher,
-    ))
-        // body: _showFindPeer(context),
-        );
+      home: Scaffold(
+          // appBar: AppBar(
+          //   title: Text('Flutter-WebRTC example'),
+          // ),
+          ),
+      onGenerateRoute: (RouteSettings settings) {
+        String? id;
+        if (settings.name != null) {
+          print("settings :$settings");
+          var uriData = Uri.parse(settings.name!);
+          //uriData.path will be your path and uriData.queryParameters will hold query-params values
+          print("uriData :$uriData");
+          print("uriData.query :${uriData.query}");
+          Map<String, String> queryMap = Uri.splitQueryString(uriData.query);
+          id = queryMap["id"];
+          print("id: $id");
+        }
+        return MaterialPageRoute(
+            builder: (BuildContext context) => id != null
+                ? CallSample(
+                    host: _server,
+                    id: id,
+                    isTeacher: false,
+                  )
+                : Container(
+                    child: Text("id为空"),
+                  ));
+      },
+      // body: _showFindPeer(context),
+    );
   }
 
   /// 初始化数据? 服务器host

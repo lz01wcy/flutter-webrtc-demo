@@ -86,6 +86,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "互动连麦",
       home: Scaffold(
           // appBar: AppBar(
           //   title: Text('Flutter-WebRTC example'),
